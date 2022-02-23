@@ -16,7 +16,6 @@ type OAuthConfigProvider interface {
 type OauthState interface {
 	GetStateData() []byte
 	GetProvider() string
-	GetUserIdentifiers() []string
 	GetScope() []string
 }
 

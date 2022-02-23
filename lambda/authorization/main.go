@@ -67,11 +67,10 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 			"user_id": "abcde"
 		}
 	*/
-	user := gjson.Get(eventBodyString, "user").String()
-
-	um, err := awssolution.UserMetaFromJson([]byte(user))
+	userData := gjson.Get(eventBodyString, "user").String()
+	usermeta, err := awssolution.FromJson([]byte(userData))
 	if err != nil {
-		log.Errorf("failed to convert json to user meta %s %v", user, err)
+		log.Errorf("failed to convert json to user meta %v %v", userData, err)
 		return lambdahelper.FailureMessage(400, "user data is not expected"), err
 	}
 
@@ -86,11 +85,11 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 	}
 
 	nounceState := awssolution.StateToken{
-		User:     um,
+		User:     usermeta,
 		Provider: strings.ToUpper(os.Getenv("OAUTH_PROVIDER")),
 		Scope:    os.Getenv("SCOPE"),
 	}
-	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), um, os.Getenv("OAUTH_NOUNCE_BUCKET"))
+	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), usermeta, os.Getenv("OAUTH_NOUNCE_BUCKET"))
 	if err != nil {
 		return lambdahelper.FailureMessage(500, "could not load oauth config from aws"), err
 	}
@@ -98,7 +97,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 	authurl, err := gotoauth.GetAuthUrl(nounceState, awsEnv, awsEnv)
 
 	if err != nil {
-		log.Errorf("failed to initialize authorization flow for user %s %v", um.UserId, err)
+		log.Errorf("failed to initialize authorization flow for user %v %v", usermeta, err)
 		return lambdahelper.FailureMessage(500, "failed to get auth url"), err
 	}
 	return lambdahelper.Success(*authurl), nil

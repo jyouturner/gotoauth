@@ -39,11 +39,6 @@ func (p StateToken) GetProvider() string {
 	return p.Provider
 }
 
-//GetUserIdentifiers implement the AuthState function
-func (p StateToken) GetUserIdentifiers() []string {
-	return []string{p.User.OrgId, p.User.UserId}
-}
-
 func (p StateToken) GetScope() []string {
 	return strings.Split(p.Scope, " ")
 }

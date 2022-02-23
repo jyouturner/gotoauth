@@ -23,7 +23,7 @@ func TestGetAuthUrlGoogle(t *testing.T) {
 	data := getTestData("testdata/TestGetAuthUrlGoogle.json", t)
 	awsClient := getAWSClient(data["TEST_AWS_PROFILE"], t)
 	provider := data["PROVIDER"]
-	user := awssolution.UserMeta{
+	user := awssolution.OrgUser{
 		OrgId:  data["ORG_ID"],
 		UserId: data["USER_ID"],
 	}

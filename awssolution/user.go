@@ -4,21 +4,22 @@ import (
 	"encoding/json"
 )
 
-type UserMeta struct {
+//OrgUser implements the UserMeta with organization and user identifier. This is probably enough for most of use cases.
+type OrgUser struct {
 	OrgId  string `json:"org_id"`
 	UserId string `json:"user_id"`
 }
 
-func DecodeUserMeta(data []byte, um *UserMeta) error {
-	return json.Unmarshal(data, um)
-}
-
-func EncodeUserMeta(um UserMeta) ([]byte, error) {
-	return json.Marshal(um)
-}
-
-func UserMetaFromJson(data []byte) (UserMeta, error) {
-	um := UserMeta{}
+func FromJson(data []byte) (UserMeta, error) {
+	um := OrgUser{}
 	err := json.Unmarshal(data, &um)
 	return um, err
+}
+
+func (p OrgUser) Encode() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+func (p OrgUser) GetAccessTokenFolderPath() string {
+	return p.UserId
 }

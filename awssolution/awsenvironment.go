@@ -15,10 +15,14 @@ import (
 	"fmt"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/jyouturner/gotoauth"
+	log "github.com/sirupsen/logrus"
 )
+
+type UserMeta interface {
+	Encode() ([]byte, error)
+	GetAccessTokenFolderPath() string
+}
 
 type awsEnv struct {
 	awsClient AWSClient
@@ -36,7 +40,7 @@ type awsEnv struct {
 
 func NewAWSEnvByUser(client AWSClient, secretName string, tokenBucketName string, user UserMeta, nounceBucket string) (*awsEnv, error) {
 
-	return NewAWSEnv(client, secretName, tokenBucketName, user.UserId, nounceBucket)
+	return NewAWSEnv(client, secretName, tokenBucketName, user.GetAccessTokenFolderPath(), nounceBucket)
 }
 
 func NewAWSEnv(client AWSClient, secretName string, tokenBucketName string, tokenFilePath string, nounceBucket string) (*awsEnv, error) {
