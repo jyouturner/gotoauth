@@ -40,7 +40,8 @@ func GetAuthUrl(state OauthState, configProvider OAuthConfigProvider, nounceWrit
 	}
 
 	//get the auth URL
-	authUrl := cfg.AuthCodeURL(nounce, oauth2.AccessTypeOffline)
+	//force approval to support gmail api, and not a bad idea anyway.
+	authUrl := cfg.AuthCodeURL(nounce, oauth2.AccessTypeOffline, oauth2.ApprovalForce)
 
 	//redirect to the oauth provider authrization URL
 	return &authUrl, nil

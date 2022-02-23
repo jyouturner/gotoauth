@@ -39,11 +39,12 @@ func (s *NotifyRefreshTokenSource) Token() (*oauth2.Token, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.t.Valid() {
-		fmt.Println("returning existing token")
+		log.Info("returning existing token")
 		return s.t, nil
 	}
 	t, err := s.new.Token()
 	if err != nil {
+		log.Errorf("failed to get token %v", err)
 		return nil, err
 	}
 	s.t = t
