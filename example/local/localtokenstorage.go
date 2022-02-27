@@ -1,4 +1,4 @@
-package gotoauth
+package local
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/jyouturner/gotoauth"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
@@ -47,5 +48,5 @@ func ConfigFromLocalJsonFile(secretFile string, scope []string) (*oauth2.Config,
 		log.Errorf("Unable to read client secret file: %v", err)
 		return nil, err
 	}
-	return ConfigFromJSON(b, scope)
+	return gotoauth.ConfigFromJSON(b, scope)
 }

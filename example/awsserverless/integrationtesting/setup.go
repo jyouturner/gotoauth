@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/jyouturner/gotoauth/awssolution"
+	"github.com/jyouturner/gotoauth/example/awsserverless"
 )
 
-func getAWSClient(profile string, t *testing.T) awssolution.AWSClient {
+func getAWSClient(profile string, t *testing.T) awsserverless.AWSClient {
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithSharedConfigProfile(profile))
@@ -18,7 +18,7 @@ func getAWSClient(profile string, t *testing.T) awssolution.AWSClient {
 		t.Errorf("failed to create aws session, %v", err)
 
 	}
-	awsClient := awssolution.AWSClient{
+	awsClient := awsserverless.AWSClient{
 		Config: cfg,
 	}
 	if err != nil {

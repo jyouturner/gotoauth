@@ -1,5 +1,5 @@
 //This program has the client code to handle AWS services including saving to and reading from S3, reading from Sercret Manager
-package awssolution
+package awsserverless
 
 import (
 	"bytes"

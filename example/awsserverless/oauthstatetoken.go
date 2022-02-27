@@ -1,4 +1,4 @@
-package gotoauth
+package awsserverless
 
 import (
 	"encoding/json"

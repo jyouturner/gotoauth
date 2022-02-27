@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/jyouturner/gotoauth"
-	"github.com/jyouturner/gotoauth/awssolution"
+	"github.com/jyouturner/gotoauth/example/awsserverless"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -23,16 +23,16 @@ func TestGetAuthUrlGoogle(t *testing.T) {
 	data := getTestData("testdata/TestGetAuthUrlGoogle.json", t)
 	awsClient := getAWSClient(data["TEST_AWS_PROFILE"], t)
 	provider := data["PROVIDER"]
-	user := gotoauth.OrgUser{
+	user := awsserverless.OrgUser{
 		OrgId:  data["ORG_ID"],
 		UserId: data["USER_ID"],
 	}
-	nounceState := gotoauth.StateToken{
+	nounceState := awsserverless.StateToken{
 		User:     user,
 		Provider: provider,
 		Scope:    data["SCOPE"],
 	}
-	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, data["AWS_SECRET_NAME"], data["TOKEN_BUCKET"], user, data["NOUNCE_TOKEN_BUCKET"])
+	awsEnv, err := awsserverless.NewAWSEnvByUser(awsClient, data["AWS_SECRET_NAME"], data["TOKEN_BUCKET"], user, data["NOUNCE_TOKEN_BUCKET"])
 	if err != nil {
 		t.Errorf("could not load oauth config from aws %v", err)
 	}

@@ -1,4 +1,4 @@
-package awssolution
+package awsserverless
 
 import (
 	"encoding/json"

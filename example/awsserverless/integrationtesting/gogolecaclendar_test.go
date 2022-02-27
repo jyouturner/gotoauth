@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/jyouturner/gotoauth"
-	"github.com/jyouturner/gotoauth/awssolution"
+	"github.com/jyouturner/gotoauth/example/awsserverless"
 	log "github.com/sirupsen/logrus"
 	googlecalendar "google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
@@ -17,15 +17,15 @@ func TestListGoogleCalendarEvents(t *testing.T) {
 	log.SetLevel(log.DebugLevel)
 	data := getTestData("testdata/TestListGoogleCalendarEvents.json", t)
 	awsClient := getAWSClient(data["TEST_AWS_PROFILE"], t)
-	user := gotoauth.OrgUser{
+	user := awsserverless.OrgUser{
 		OrgId:  data["ORG_ID"],
 		UserId: data["USER_ID"],
 	}
-	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, data["AWS_SECRET_NAME"], data["TOKEN_BUCKET"], user, data["NOUNCE_TOKEN_BUCKET"])
+	awsEnv, err := awsserverless.NewAWSEnvByUser(awsClient, data["AWS_SECRET_NAME"], data["TOKEN_BUCKET"], user, data["NOUNCE_TOKEN_BUCKET"])
 	if err != nil {
 		t.Errorf("could not load oauth config from aws %v", err)
 	}
-	authconfig, err := awsEnv.GetOauthConfigOfUser("GOOGLE")
+	authconfig, err := awsEnv.GetAppOathConfig("GOOGLE")
 	if err != nil {
 		t.Errorf("missing auth config for provider")
 	}

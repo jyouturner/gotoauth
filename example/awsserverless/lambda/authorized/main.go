@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/jyouturner/gotoauth"
-	"github.com/jyouturner/gotoauth/awssolution"
-	lambdahelper "github.com/jyouturner/gotoauth/lambda"
+	"github.com/jyouturner/gotoauth/example/awsserverless"
+	lambdahelper "github.com/jyouturner/gotoauth/example/awsserverless/lambda"
 )
 
 func init() {
@@ -62,7 +62,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 		return lambdahelper.FailureMessage(500, "system error"), fmt.Errorf("system error")
 
 	}
-	awsClient := awssolution.AWSClient{
+	awsClient := awsserverless.AWSClient{
 		Config: cfg,
 	}
 
@@ -71,9 +71,9 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 	if err != nil {
 		return lambdahelper.FailureMessage(500, "could not find the matching nounce"), err
 	}
-	stateData := gotoauth.StateTokenFromBytes(b)
+	stateData := awsserverless.StateTokenFromBytes(b)
 
-	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), stateData.User, os.Getenv("OAUTH_NOUNCE_BUCKET"))
+	awsEnv, err := awsserverless.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), stateData.User, os.Getenv("OAUTH_NOUNCE_BUCKET"))
 	if err != nil {
 		return lambdahelper.FailureMessage(500, "could not load oauth config from aws"), err
 	}

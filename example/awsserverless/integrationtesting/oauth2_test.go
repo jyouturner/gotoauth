@@ -1,8 +1,10 @@
-package gotoauth
+package integrationtesting
 
 import (
 	"testing"
 
+	"github.com/jyouturner/gotoauth"
+	"github.com/jyouturner/gotoauth/example/local"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -33,11 +35,11 @@ func TestOauth2_GetAccessibleResources(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//create the http client
-			localTokenStorage := LocalTokenStorage{
+			localTokenStorage := local.LocalTokenStorage{
 				TokenFile: tt.fields.TokenFile,
 			}
-			config, _ := ConfigFromLocalJsonFile(tt.fields.SecretFile, tt.fields.Scope)
-			client, err := NewClient(localTokenStorage, config)
+			config, _ := local.ConfigFromLocalJsonFile(tt.fields.SecretFile, tt.fields.Scope)
+			client, err := gotoauth.NewClient(localTokenStorage, config)
 			if err != nil {
 				t.Fail()
 			}

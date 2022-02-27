@@ -1,0 +1,8 @@
+{
+    "TEST_AWS_PROFILE": "iamadmin-coopers-cose",
+    "PROVIDER": "GOOGLE",
+    "USER_ID": "abcde",
+    "NOUNCE_TOKEN_BUCKET": "tam-auth-state",
+    "TOKEN_BUCKET": "tam-org-12345",
+    "AWS_SECRET_NAME": "dev/notion-integration/keys"
+}

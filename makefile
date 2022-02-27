@@ -3,8 +3,8 @@
 build:
 	export GO111MODULE=on
 	echo "the lambda executable to be deployed by serverless framework to AWS"
-	env GOOS=linux go build -o bin/lambda/authorization lambda/authorization/main.go
-	env GOOS=linux go build -o bin/lambda/authorized lambda/authorized/main.go
+	env GOOS=linux go build -o bin/lambda/authorization example/awsserverless/lambda/authorization/main.go
+	env GOOS=linux go build -o bin/lambda/authorized example/awsserverless/lambda/authorized/main.go
 
 
 clean:

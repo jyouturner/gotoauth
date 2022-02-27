@@ -8,7 +8,7 @@
 //		/abcde
 //			/google_token.json
 //			/config.yml
-package awssolution
+package awsserverless
 
 import (
 	"encoding/json"
@@ -28,12 +28,37 @@ type awsEnv struct {
 	//the S3 file path to store the oauth access tockets. Note this is the folder for example, if the path is "{user_id}/access_token", then the token is stored in {user_id}/access_token/google_token.json
 	TokenFilePath string
 	//OauthProviderConfigMap key is the capital case of the oauth provider for example GOOGLE, ATLANSSIAN, tbe value is the oauth config data including the credential secret, and token storage
-	oauthProviders map[string]gotoauth.UserOauthConfig
+	oauthProviders map[string]gotoauth.AppOauthConfig
 	//the S3 bucket to store the auth nounce (the so called state when initializing the auth code)
 	NounceBucket string
 }
 
-func NewAWSEnvByUser(client AWSClient, secretName string, tokenBucketName string, user gotoauth.UserMeta, nounceBucket string) (*awsEnv, error) {
+type UserMeta interface {
+	Encode() ([]byte, error)
+	GetAccessTokenFolderPath() string
+}
+
+//OrgUser implements the UserMeta with organization and user identifier. This is probably enough for most of use cases.
+type OrgUser struct {
+	OrgId  string `json:"org_id"`
+	UserId string `json:"user_id"`
+}
+
+func FromJson(data []byte) (UserMeta, error) {
+	um := OrgUser{}
+	err := json.Unmarshal(data, &um)
+	return um, err
+}
+
+func (p OrgUser) Encode() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+func (p OrgUser) GetAccessTokenFolderPath() string {
+	return p.UserId
+}
+
+func NewAWSEnvByUser(client AWSClient, secretName string, tokenBucketName string, user UserMeta, nounceBucket string) (*awsEnv, error) {
 
 	return NewAWSEnv(client, secretName, tokenBucketName, user.GetAccessTokenFolderPath(), nounceBucket)
 }
@@ -45,7 +70,7 @@ func NewAWSEnv(client AWSClient, secretName string, tokenBucketName string, toke
 		SecretName:      secretName,
 		TokenBucketName: tokenBucketName,
 		TokenFilePath:   tokenFilePath,
-		oauthProviders:  make(map[string]gotoauth.UserOauthConfig),
+		oauthProviders:  make(map[string]gotoauth.AppOauthConfig),
 		NounceBucket:    nounceBucket,
 	}
 	err := p.loadOAuthConfigOfUser()
@@ -55,8 +80,8 @@ func NewAWSEnv(client AWSClient, secretName string, tokenBucketName string, toke
 	return &p, nil
 }
 
-//GetOauthConfigOfUser implement the OAuthConfigProvider
-func (p awsEnv) GetOauthConfigOfUser(oauthProvider string) (*gotoauth.UserOauthConfig, error) {
+//GetAppOathConfig implement the OAuthConfigSource
+func (p awsEnv) GetAppOathConfig(oauthProvider string) (*gotoauth.AppOauthConfig, error) {
 	config, exists := p.oauthProviders[strings.ToUpper(oauthProvider)]
 	if !exists {
 		return nil, fmt.Errorf("missing config for %s", oauthProvider)
@@ -83,7 +108,7 @@ func (p *awsEnv) loadOAuthConfigOfUser() error {
 			if err != nil {
 				return fmt.Errorf("failed to create S3 token storage %v", err)
 			}
-			p.oauthProviders[strings.ToUpper(oauthProvider)] = gotoauth.UserOauthConfig{
+			p.oauthProviders[strings.ToUpper(oauthProvider)] = gotoauth.AppOauthConfig{
 				Secret:            []byte(fmt.Sprintf("%v", v)),
 				OauthTokenStorage: tokenStorage,
 			}
@@ -131,7 +156,7 @@ func (p awsEnv) Read(nounce string) (gotoauth.OauthState, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read from S3 err %v", err)
 	}
-	std := gotoauth.StateToken{}
+	std := StateToken{}
 	log.Println(string(b))
 	err = json.Unmarshal(b, &std)
 	if err != nil {

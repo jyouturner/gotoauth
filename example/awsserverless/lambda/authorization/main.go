@@ -13,8 +13,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/jyouturner/gotoauth"
-	"github.com/jyouturner/gotoauth/awssolution"
-	lambdahelper "github.com/jyouturner/gotoauth/lambda"
+	"github.com/jyouturner/gotoauth/example/awsserverless"
+	lambdahelper "github.com/jyouturner/gotoauth/example/awsserverless/lambda"
 )
 
 func init() {
@@ -68,7 +68,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 		}
 	*/
 	userData := gjson.Get(eventBodyString, "user").String()
-	usermeta, err := gotoauth.FromJson([]byte(userData))
+	usermeta, err := awsserverless.FromJson([]byte(userData))
 	if err != nil {
 		log.Errorf("failed to convert json to user meta %v %v", userData, err)
 		return lambdahelper.FailureMessage(400, "user data is not expected"), err
@@ -80,16 +80,16 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 
 	}
 
-	awsClient := awssolution.AWSClient{
+	awsClient := awsserverless.AWSClient{
 		Config: cfg,
 	}
 
-	nounceState := gotoauth.StateToken{
+	nounceState := awsserverless.StateToken{
 		User:     usermeta,
 		Provider: strings.ToUpper(os.Getenv("OAUTH_PROVIDER")),
 		Scope:    os.Getenv("SCOPE"),
 	}
-	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), usermeta, os.Getenv("OAUTH_NOUNCE_BUCKET"))
+	awsEnv, err := awsserverless.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), usermeta, os.Getenv("OAUTH_NOUNCE_BUCKET"))
 	if err != nil {
 		return lambdahelper.FailureMessage(500, "could not load oauth config from aws"), err
 	}

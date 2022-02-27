@@ -1,4 +1,4 @@
-package awssolution
+package web
 
 import (
 	"context"
