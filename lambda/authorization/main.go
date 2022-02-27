@@ -68,7 +68,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 		}
 	*/
 	userData := gjson.Get(eventBodyString, "user").String()
-	usermeta, err := awssolution.FromJson([]byte(userData))
+	usermeta, err := gotoauth.FromJson([]byte(userData))
 	if err != nil {
 		log.Errorf("failed to convert json to user meta %v %v", userData, err)
 		return lambdahelper.FailureMessage(400, "user data is not expected"), err
@@ -84,7 +84,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 		Config: cfg,
 	}
 
-	nounceState := awssolution.StateToken{
+	nounceState := gotoauth.StateToken{
 		User:     usermeta,
 		Provider: strings.ToUpper(os.Getenv("OAUTH_PROVIDER")),
 		Scope:    os.Getenv("SCOPE"),

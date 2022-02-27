@@ -42,15 +42,6 @@ func TestOauth2_GetAccessibleResources(t *testing.T) {
 				t.Fail()
 			}
 			log.Info(client)
-			//got, err := GetAccessibleResources(client)
-			//if (err != nil) != tt.wantErr {
-			//	t.Errorf("Oauth2.GetAccessibleResources() error = %v, wantErr %v", err, tt.wantErr)
-			//	return
-			//}
-			//log.Info(got)
-			//if got != tt.want {
-			//	t.Errorf("JiraService.GetAccessibleResources() = %v, want %v", got, tt.want)
-			//}
 		})
 	}
 }

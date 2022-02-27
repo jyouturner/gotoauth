@@ -23,11 +23,11 @@ func TestGetAuthUrlGoogle(t *testing.T) {
 	data := getTestData("testdata/TestGetAuthUrlGoogle.json", t)
 	awsClient := getAWSClient(data["TEST_AWS_PROFILE"], t)
 	provider := data["PROVIDER"]
-	user := awssolution.OrgUser{
+	user := gotoauth.OrgUser{
 		OrgId:  data["ORG_ID"],
 		UserId: data["USER_ID"],
 	}
-	nounceState := awssolution.StateToken{
+	nounceState := gotoauth.StateToken{
 		User:     user,
 		Provider: provider,
 		Scope:    data["SCOPE"],

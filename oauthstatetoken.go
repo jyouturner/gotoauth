@@ -1,4 +1,4 @@
-package awssolution
+package gotoauth
 
 import (
 	"encoding/json"

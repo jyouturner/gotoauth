@@ -17,7 +17,7 @@ func TestListGoogleCalendarEvents(t *testing.T) {
 	log.SetLevel(log.DebugLevel)
 	data := getTestData("testdata/TestListGoogleCalendarEvents.json", t)
 	awsClient := getAWSClient(data["TEST_AWS_PROFILE"], t)
-	user := awssolution.OrgUser{
+	user := gotoauth.OrgUser{
 		OrgId:  data["ORG_ID"],
 		UserId: data["USER_ID"],
 	}

@@ -1,4 +1,4 @@
-package awssolution
+package gotoauth
 
 import (
 	"encoding/json"
@@ -22,4 +22,9 @@ func (p OrgUser) Encode() ([]byte, error) {
 
 func (p OrgUser) GetAccessTokenFolderPath() string {
 	return p.UserId
+}
+
+type UserMeta interface {
+	Encode() ([]byte, error)
+	GetAccessTokenFolderPath() string
 }

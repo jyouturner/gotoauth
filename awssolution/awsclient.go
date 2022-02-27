@@ -1,3 +1,4 @@
+//This program has the client code to handle AWS services including saving to and reading from S3, reading from Sercret Manager
 package awssolution
 
 import (
@@ -17,11 +18,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
+//AWSClient wraps the aws config and receiver of multiple AWS client functions
 type AWSClient struct {
 	Config aws.Config
 }
 
-//get function fetch S3 object
+//S3Get can fetch S3 object
 func (p AWSClient) S3Get(bucket string, key string) ([]byte, error) {
 
 	// Create an Amazon S3 service client
@@ -40,7 +42,7 @@ func (p AWSClient) S3Get(bucket string, key string) ([]byte, error) {
 
 }
 
-//save function uploads data to S3
+//S3Save uploads data to S3
 func (p AWSClient) S3Save(data []byte, bucket string, key string) error {
 
 	// Create an Amazon S3 service client
@@ -58,7 +60,7 @@ func (p AWSClient) S3Save(data []byte, bucket string, key string) error {
 	return nil
 }
 
-//ls function execute the "ls" of S3
+//S3Ls list S3 buckets
 func (p AWSClient) S3Ls() (*s3.ListBucketsOutput, error) {
 
 	// Create an Amazon S3 service client
@@ -75,6 +77,7 @@ func (p AWSClient) S3Ls() (*s3.ListBucketsOutput, error) {
 	return output, nil
 }
 
+//GetSecret read the secret from AWS secret manager
 func (p AWSClient) GetSecret(name string) (*map[string]string, error) {
 
 	var secretData = make(map[string]string)

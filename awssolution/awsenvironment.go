@@ -19,11 +19,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type UserMeta interface {
-	Encode() ([]byte, error)
-	GetAccessTokenFolderPath() string
-}
-
 type awsEnv struct {
 	awsClient AWSClient
 	//the AWS Secret name. The secret has a bunch of key-value pair, each of which contains the OAuth Config json
@@ -38,7 +33,7 @@ type awsEnv struct {
 	NounceBucket string
 }
 
-func NewAWSEnvByUser(client AWSClient, secretName string, tokenBucketName string, user UserMeta, nounceBucket string) (*awsEnv, error) {
+func NewAWSEnvByUser(client AWSClient, secretName string, tokenBucketName string, user gotoauth.UserMeta, nounceBucket string) (*awsEnv, error) {
 
 	return NewAWSEnv(client, secretName, tokenBucketName, user.GetAccessTokenFolderPath(), nounceBucket)
 }
@@ -136,7 +131,7 @@ func (p awsEnv) Read(nounce string) (gotoauth.OauthState, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read from S3 err %v", err)
 	}
-	std := StateToken{}
+	std := gotoauth.StateToken{}
 	log.Println(string(b))
 	err = json.Unmarshal(b, &std)
 	if err != nil {

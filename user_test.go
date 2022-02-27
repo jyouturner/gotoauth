@@ -1,10 +1,8 @@
-package integrationtesting
+package gotoauth
 
 import (
 	"fmt"
 	"testing"
-
-	"github.com/jyouturner/gotoauth/awssolution"
 )
 
 func TestUserMetaFromJson(t *testing.T) {
@@ -27,7 +25,7 @@ func TestUserMetaFromJson(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := awssolution.FromJson(tt.args.data)
+			got, err := FromJson(tt.args.data)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserMetaFromJson() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -44,7 +42,7 @@ func TestUserMetaFromJson2(t *testing.T) {
 		  "user_id": "abcde"
 		}
 	`
-	userMeta, err := awssolution.FromJson([]byte(eventBody))
+	userMeta, err := FromJson([]byte(eventBody))
 	if err != nil {
 		t.Error(err)
 	}

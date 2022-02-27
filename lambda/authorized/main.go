@@ -71,7 +71,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 	if err != nil {
 		return lambdahelper.FailureMessage(500, "could not find the matching nounce"), err
 	}
-	stateData := awssolution.StateTokenFromBytes(b)
+	stateData := gotoauth.StateTokenFromBytes(b)
 
 	awsEnv, err := awssolution.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), stateData.User, os.Getenv("OAUTH_NOUNCE_BUCKET"))
 	if err != nil {
