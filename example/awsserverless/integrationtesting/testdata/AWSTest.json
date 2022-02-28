@@ -2,5 +2,5 @@
     "TEST_AWS_PROFILE": "iamadmin-coopers-cose",
     "BUCKET": "tam-auth-state",
     "FILE": "simpletest.json",
-    "SECRET": "dev/notion-integration/keys"
+    "SECRET": "dev/automaticmanager/keys"
 }

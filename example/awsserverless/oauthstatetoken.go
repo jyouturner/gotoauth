@@ -9,11 +9,13 @@ import (
 //StateToken implements the OauthState
 type StateToken struct {
 	//User has the user's organiation and identifier
-	User UserMeta `json:"user"`
+	User OrgUser `json:"user"`
 	//provider is Google, Atlanssian
 	Provider string `json:"provider"`
 	//scope is the space delimited string like "scope1 scope2 scope3"
 	Scope string `json:"scope"`
+	//
+	SuccessRedirectUrl string `json:"successRedirectTo"`
 }
 
 func StateTokenFromBytes(data []byte) StateToken {

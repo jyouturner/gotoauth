@@ -58,6 +58,7 @@ functions:
       OAUTH_NOUNCE_BUCKET: ${env:OAUTH_NOUNCE_BUCKET}
       OAUTH_PROVIDER: GOOGLE
       SCOPE: ${env:GOOGLE_SCOPE}
+      AUTHORIZED_TO_URL: ${env:GOOGLE_AUTHORIZED_TO_URL}
     events:
       - http:
           path: authorize

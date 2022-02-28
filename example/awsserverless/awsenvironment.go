@@ -44,7 +44,7 @@ type OrgUser struct {
 	UserId string `json:"user_id"`
 }
 
-func FromJson(data []byte) (UserMeta, error) {
+func FromJson(data []byte) (OrgUser, error) {
 	um := OrgUser{}
 	err := json.Unmarshal(data, &um)
 	return um, err

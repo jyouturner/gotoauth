@@ -10,9 +10,12 @@ import (
 
 //LambaResponse specifies the data structure of Lambda output to API gateway.
 type LambdaResponse struct {
-	StatusCode int    `json:"statusCode"`
-	Body       string `json:"body"`
+	StatusCode int         `json:"statusCode"`
+	Body       string      `json:"body"`
+	Headers    HeadersType `json:"headers"`
 }
+
+type HeadersType map[string]interface{}
 
 type Response struct {
 	Status  string `json:"status"`
@@ -32,7 +35,10 @@ func Success(message string) LambdaResponse {
 func Redirect(code int, url string) LambdaResponse {
 	return LambdaResponse{
 		StatusCode: code,
-		Body:       url,
+		Body:       "",
+		Headers: HeadersType{
+			"Location": url,
+		},
 	}
 
 }
@@ -54,7 +60,7 @@ type Handler struct {
 }
 
 //Handler is the Lambda handler, it does (very) basic validation, then pass the event to SQS queue to be processed.
-func (p *Handler) Handle(ctx context.Context, event json.RawMessage) (LambdaResponse, error) {
+func (p *Handler) HandleExample(ctx context.Context, event json.RawMessage) (LambdaResponse, error) {
 	eventBody := gjson.Get(string(event), "body")
 	err := p.ValidateBodyFunction(eventBody.String())
 	// with AWS API Gateway and Lambda proxy, we should put the "error" in the response statusCode, than raising error from Lambda integration.

@@ -48,6 +48,10 @@ func init() {
 	if !exists {
 		log.Fatalf("missing %s", "SCOPE")
 	}
+	_, exists = os.LookupEnv("AUTHORIZED_TO_URL")
+	if !exists {
+		log.Fatalf("missing %s", "AUTHORIZED_TO_URL")
+	}
 
 }
 
@@ -68,7 +72,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 		}
 	*/
 	userData := gjson.Get(eventBodyString, "user").String()
-	usermeta, err := awsserverless.FromJson([]byte(userData))
+	orgUser, err := awsserverless.FromJson([]byte(userData))
 	if err != nil {
 		log.Errorf("failed to convert json to user meta %v %v", userData, err)
 		return lambdahelper.FailureMessage(400, "user data is not expected"), err
@@ -85,11 +89,12 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 	}
 
 	nounceState := awsserverless.StateToken{
-		User:     usermeta,
-		Provider: strings.ToUpper(os.Getenv("OAUTH_PROVIDER")),
-		Scope:    os.Getenv("SCOPE"),
+		User:               orgUser,
+		Provider:           strings.ToUpper(os.Getenv("OAUTH_PROVIDER")),
+		Scope:              os.Getenv("SCOPE"),
+		SuccessRedirectUrl: os.Getenv("AUTHORIZED_TO_URL"),
 	}
-	awsEnv, err := awsserverless.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), usermeta, os.Getenv("OAUTH_NOUNCE_BUCKET"))
+	awsEnv, err := awsserverless.NewAWSEnvByUser(awsClient, os.Getenv("AWS_SECRET_NAME"), os.Getenv("ACCESS_TOKEN_BUCKET"), orgUser, os.Getenv("OAUTH_NOUNCE_BUCKET"))
 	if err != nil {
 		return lambdahelper.FailureMessage(500, "could not load oauth config from aws"), err
 	}
@@ -97,7 +102,7 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 	authurl, err := gotoauth.GetAuthUrl(nounceState, awsEnv, awsEnv)
 
 	if err != nil {
-		log.Errorf("failed to initialize authorization flow for user %v %v", usermeta, err)
+		log.Errorf("failed to initialize authorization flow for user %v %v", orgUser, err)
 		return lambdahelper.FailureMessage(500, "failed to get auth url"), err
 	}
 	return lambdahelper.Success(*authurl), nil

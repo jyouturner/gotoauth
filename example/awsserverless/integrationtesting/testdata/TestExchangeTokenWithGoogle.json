@@ -3,6 +3,6 @@
     "PROVIDER": "GOOGLE",
     "NOUNCE_TOKEN_BUCKET": "tam-auth-state",
     "TOKEN_BUCKET": "tam-org-12345",
-    "AWS_SECRET_NAME": "dev/notion-integration/keys",
+    "AWS_SECRET_NAME": "dev/automaticmanager/keys",
     "SCOPE": "https://www.googleapis.com/auth/calendar.events.readonly"
 }

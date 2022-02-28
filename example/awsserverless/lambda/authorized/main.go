@@ -82,6 +82,9 @@ func Handle(ctx context.Context, event json.RawMessage) (lambdahelper.LambdaResp
 		log.Error(err)
 		return lambdahelper.FailureMessage(500, "failed to get access token"), err
 	}
-	//TODO should handle redirect instead. (the redirect will be in the state token)
-	return lambdahelper.Success("great"), nil
+	successRedirectUrl := stateData.SuccessRedirectUrl
+	if successRedirectUrl == "" {
+		successRedirectUrl = "https://wwww.google.com"
+	}
+	return lambdahelper.Redirect(301, successRedirectUrl), nil
 }
